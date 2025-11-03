@@ -1,0 +1,716 @@
+/* --- Root Variables --- */
+:root {
+    --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    
+    --color-primary: #22b8cf; /* Blue-green */
+    --color-primary-dark: #1a8a9e;
+    --color-primary-light: #6fe1f5;
+    
+    --color-secondary: #f0f4f8;
+    --color-text: #ffffff;
+    --color-text-dark: #222222;
+    --color-text-muted: #c0c0c0;
+
+    --color-success: #28a745; /* Green */
+    --color-success-light: rgba(40, 167, 69, 0.2);
+    --color-success-glow: #34d399;
+
+    --color-danger: #dc3545; /* Red */
+    --color-danger-light: rgba(220, 53, 69, 0.2);
+    --color-danger-glow: #f87171;
+
+    --color-warn: #ffc107; /* Yellow */
+
+    --bg-color: #0a0f1f; /* Dark blue background */
+    --bg-gradient: linear-gradient(170deg, #0a0f1f 0%, #1a2035 100%);
+    
+    /* Glassmorphism */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-bg-modal: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-border-light: rgba(255, 255, 255, 0.3);
+    --glass-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    --glass-blur: 12px;
+}
+
+/* --- Global Styles --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--bg-color);
+    background-image: var(--bg-gradient);
+    color: var(--color-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* --- Layout --- */
+header, #bottom-nav {
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+    padding: 1rem;
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow: var(--glass-shadow);
+}
+
+.glass-header {
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--glass-bg);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.glass-header h1 {
+    font-size: 1.5rem;
+    color: var(--color-primary-light);
+    text-shadow: 0 0 5px var(--color-primary);
+}
+
+.glass-footer {
+    bottom: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: var(--glass-bg);
+    border-top: 1px solid var(--glass-border);
+    padding: 0.5rem 1rem;
+}
+
+#app-container {
+    flex-grow: 1;
+    padding: 70px 1rem 80px 1rem; /* Space for header and footer */
+    overflow-y: auto;
+}
+
+/* --- Page Transitions --- */
+.page {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+.page.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Sidebar Menu --- */
+#sidebar-menu {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 280px;
+    height: 100%;
+    z-index: 1001;
+    transition: left 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+#sidebar-menu.open {
+    left: 0;
+}
+
+#sidebar-menu ul {
+    list-style: none;
+    margin-top: 60px;
+}
+
+#sidebar-menu li {
+    margin-bottom: 0.5rem;
+}
+
+#sidebar-menu a, #sidebar-menu button {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 1.1rem;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#sidebar-menu a:hover, #sidebar-menu button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px var(--color-primary-light);
+}
+
+#sidebar-menu button.danger:hover {
+    background-color: var(--color-danger-light);
+    box-shadow: 0 0 10px var(--color-danger-glow);
+}
+
+#menu-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+}
+
+/* --- Bottom Navigation --- */
+.nav-button {
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    font-family: var(--font-family);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 60px;
+}
+
+.nav-button .nav-label {
+    font-size: 0.7rem;
+    margin-top: 2px;
+}
+
+.nav-button.active {
+    color: var(--color-primary-light);
+    transform: translateY(-3px);
+    text-shadow: 0 0 8px var(--color-primary);
+}
+
+.nav-button.add-button {
+    font-size: 2rem;
+    color: var(--color-text);
+    background-color: var(--color-primary);
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    transform: translateY(-20px);
+    border: 3px solid var(--bg-color);
+    box-shadow: 0 4px 10px rgba(34, 184, 207, 0.4);
+}
+
+.nav-button.add-button:active {
+    background-color: var(--color-primary-dark);
+    transform: translateY(-18px) scale(0.95);
+}
+
+/* --- Modals --- */
+#modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 100;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 101;
+    width: calc(100% - 2rem);
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 1.5rem;
+    animation: modal-pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal.hidden, #modal-overlay.hidden {
+    display: none;
+}
+
+@keyframes modal-pop-in {
+    from { opacity: 0; transform: translate(-50%, -45%) scale(0.9); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.modal h2 {
+    color: var(--color-primary-light);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.modal p {
+    margin-bottom: 1rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.modal ol {
+    margin: 0 1rem 1rem 1rem;
+    text-align: left;
+}
+
+.modal ol li {
+    margin-bottom: 0.5rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.modal-actions-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.modal-actions-vertical .btn {
+    width: 100%;
+}
+
+/* --- Glassmorphism Panel (Used by Modals, Sidebar, Cards) --- */
+.glass-panel {
+    background: var(--glass-bg-modal);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-radius: 16px;
+    padding: 1rem;
+}
+
+/* --- Form Styles --- */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-muted);
+}
+
+.form-group input[type="text"],
+.form-group input[type="time"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--color-text);
+    font-size: 1rem;
+    font-family: var(--font-family);
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-primary-light);
+    box-shadow: 0 0 10px rgba(34, 184, 207, 0.5);
+}
+
+/* Fix for date/time picker icon color */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+}
+.form-row .form-group {
+    flex: 1;
+}
+
+/* Chip Group */
+.chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.chip-group input[type="checkbox"] {
+    display: none;
+}
+.chip-group label {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--glass-border-light);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 0;
+    color: var(--color-text);
+}
+.chip-group input[type="checkbox"]:checked + label {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-text-dark);
+    font-weight: 500;
+    box-shadow: 0 0 10px rgba(34, 184, 207, 0.5);
+}
+
+.time-pickers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1rem;
+}
+.time-picker-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.time-picker-group label {
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+.time-picker-group input {
+    padding: 0.5rem;
+}
+
+/* Toggle Switch */
+.toggle-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.toggle-group label {
+    margin-bottom: 0;
+}
+.toggle-switch {
+    appearance: none;
+    width: 40px;
+    height: 24px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.toggle-switch::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.2s ease;
+}
+.toggle-switch:checked {
+    background: var(--color-primary);
+}
+.toggle-switch:checked::before {
+    transform: translateX(16px);
+}
+
+/* --- Buttons --- */
+.btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: var(--font-family);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: #000;
+}
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+    box-shadow: 0 0 15px rgba(34, 184, 207, 0.6);
+}
+
+.btn-secondary {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--color-text);
+}
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: var(--color-text);
+}
+.btn-danger:hover {
+    background-color: #b02a37;
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.6);
+}
+
+.btn-success {
+    background-color: var(--color-success);
+    color: var(--color-text);
+}
+.btn-success:hover {
+    background-color: #218838;
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.6);
+}
+
+
+.icon-button {
+    background: none;
+    border: none;
+    color: var(--color-primary-light);
+    font-size: 1.75rem;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+.icon-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Medicine Card --- */
+#medicine-list, #notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.medicine-card, .notification-item {
+    animation: slideInUp 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.medicine-card {
+    padding: 0; /* Remove padding from glass-panel */
+    overflow: hidden; /* To contain progress bar */
+    transition: all 0.3s ease;
+}
+
+.medicine-card-content {
+    padding: 1rem;
+    display: grid;
+    gap: 0.75rem;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.card-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+}
+.card-header .remaining-pills {
+    background: var(--color-primary);
+    color: var(--color-text-dark);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px var(--color-primary);
+}
+
+.card-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.slot-tag {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
+.slot-tag.active {
+    background: var(--color-warn);
+    color: var(--color-text-dark);
+    font-weight: 500;
+}
+
+.countdown-timer {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary-light);
+    text-align: center;
+    margin: 0.5rem 0;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 10px var(--color-primary);
+}
+.countdown-timer.missed {
+    color: var(--color-danger-glow);
+    text-shadow: 0 0 10px var(--color-danger);
+}
+
+.card-info {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    display: flex;
+    justify-content: space-between;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%;
+    width: 0; /* Set by JS */
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.card-actions {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+.card-actions .btn {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+}
+.card-actions .icon-button {
+    color: var(--color-text-muted);
+}
+.card-actions .icon-button:hover {
+    color: var(--color-text);
+}
+
+/* Card States */
+.medicine-card.state-taken {
+    border-color: var(--color-success);
+    box-shadow: 0 0 15px var(--color-success-light);
+}
+.medicine-card.state-taken .countdown-timer {
+    color: var(--color-success-glow);
+    text-shadow: 0 0 10px var(--color-success);
+}
+.medicine-card.state-taken .progress-bar-fill {
+    background: var(--color-success);
+}
+
+.medicine-card.state-missed {
+    animation: pulse-red 1.5s infinite;
+}
+.medicine-card.state-missed .countdown-timer {
+    color: var(--color-danger-glow);
+    text-shadow: 0 0 10px var(--color-danger);
+}
+.medicine-card.state-missed .remaining-pills {
+    background: var(--color-danger);
+    color: var(--color-text);
+    box-shadow: 0 0 8px var(--color-danger);
+}
+
+
+@keyframes pulse-red {
+    0% { border-color: var(--glass-border); box-shadow: var(--glass-shadow); }
+    50% { border-color: var(--color-danger-glow); box-shadow: 0 0 20px var(--color-danger); }
+    100% { border-color: var(--glass-border); box-shadow: var(--glass-shadow); }
+}
+
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Notifications Page --- */
+.notification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    gap: 1rem;
+}
+.notification-info {
+    flex-grow: 1;
+}
+.notification-info h4 {
+    font-size: 1.1rem;
+    color: var(--color-text);
+    margin-bottom: 0.25rem;
+}
+.notification-info p {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin: 0;
+    text-align: left;
+}
+.notification-item .status {
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+}
+.notification-item .status.missed {
+    color: var(--color-danger-glow);
+    background: var(--color-danger-light);
+}
+.notification-item .status.upcoming {
+    color: var(--color-primary-light);
+    background: rgba(34, 184, 207, 0.2);
+}
+.notification-item .status.completed {
+    color: var(--color-success-glow);
+    background: var(--color-success-light);
+}
+.notification-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+.notification-actions .btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+/* --- Helper Classes --- */
+.hidden {
+    display: none !important;
+}
+
+.empty-message {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    margin-top: 3rem;
+}
+
