@@ -1,8 +1,8 @@
 {
-  "name": "Medicine Reminder - ঔষধ মনে রাখুন",
-  "short_name": "MedicineReminder",
-  "description": "Remember your medicine intake times - আপনার ঔষধ খাওয়ার সময় মনে রাখুন",
-  "start_url": "/medicine-reminder/",
+  "name": "Medicine Reminder",
+  "short_name": "MedReminder",
+  "description": "Never forget your medicines again",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#e0e5ec",
   "theme_color": "#10b981",
@@ -19,7 +19,5 @@
       "type": "image/png"
     }
   ],
-  "categories": ["health", "productivity"],
-  "lang": "bn",
-  "dir": "ltr"
+  "categories": ["health", "productivity"]
 }
